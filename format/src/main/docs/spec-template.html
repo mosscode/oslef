@@ -1,0 +1,117 @@
+<!--
+
+    Copyright (C) 2013, Moss Computing Inc.
+
+    This file is part of oslef.
+
+    oslef is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2, or (at your option)
+    any later version.
+
+    oslef is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with oslef; see the file COPYING.  If not, write to the
+    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+    02110-1301 USA.
+
+    Linking this library statically or dynamically with other modules is
+    making a combined work based on this library.  Thus, the terms and
+    conditions of the GNU General Public License cover the whole
+    combination.
+
+    As a special exception, the copyright holders of this library give you
+    permission to link this library with independent modules to produce an
+    executable, regardless of the license terms of these independent
+    modules, and to copy and distribute the resulting executable under
+    terms of your choice, provided that you also meet, for each linked
+    independent module, the terms and conditions of the license of that
+    module.  An independent module is a module which is not derived from
+    or based on this library.  If you modify this library, you may extend
+    this exception to your version of the library, but you are not
+    obligated to do so.  If you do not wish to do so, delete this
+    exception statement from your version.
+
+-->
+<html>
+<head>
+<style type="text/css">
+body {
+	background-color: #d0e4fe;
+}
+
+table,th,td {
+	border: 1px solid black;
+}
+</style>
+</head>
+<body>
+
+<h3>OSLEF (Open Small-Loan Exchange Format)</h3>
+
+<p>The purpose of this document is to define the OSLEF
+specification.</p>
+
+<h3>Introduction</h3>
+
+<p>OSLEF data is represented by a directory containing CSV files.
+The basic structure of these files must conform to the following CSV
+specification:</p>
+
+<a href="http://tools.ietf.org/html/rfc4180">http://tools.ietf.org/html/rfc4180</a>
+
+<p>The first record in each file is a header record which assigns a
+unique name to each column in the file. The following records must
+contain data corresponding to these columns.</p>
+
+<p>Additionally, to facilitate the flattening-out of one-to-many
+relationships within loan data, an OSLEF-compliant CSV file has two
+kinds of columns. The first kind may only be specified once. An example
+of this is the loan_id column in the loans.csv file. The second kind may
+be specified multiple times using a column name prefix followed by a
+name that makes the column unique. A column prefix follows the format
+PREFIX:NAME. For example, a loan might have more than phone number by
+which to contact an applicant. In this case it would be possible to have
+two phone number columns: 'phone:home' and 'phone:work'.</p>
+
+<h3>Files Overview</h3>
+<p>There are three distinct CSV files in the OSLEF format.</p>
+<ul>
+	<li>
+	<p>loans.csv - this is the primary CSV file, as it contains most of
+	the information related to a given loan. installments.csv - contains
+	installment plan information. Each record references a record in the
+	loans.csv file.</p>
+	</li>
+
+	<li>
+	<p>history.csv - contains loan history information, including
+	payments and other loan servicing activities which affect the balances
+	of a loan's accounts (principal, fees, etc). Each record references a
+	record in the loans.csv file.</p>
+	</li>
+
+	<li>
+	<p>installments.csv - contains information on loan installment
+	plans. Each record references a record in the loans.csv file.</p>
+	</li>
+</ul>
+
+<h3>loans.csv - Columns</h3>
+
+${loanColumns}
+
+<h3>installments.csv - Columns</h3>
+
+${instColumns}
+
+<h3>history.csv - Columns</h3>
+
+${histColumns}
+
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!--
+
+    Copyright (C) 2013, Moss Computing Inc.
+
+    This file is part of oslef.
+
+    oslef is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2, or (at your option)
+    any later version.
+
+    oslef is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with oslef; see the file COPYING.  If not, write to the
+    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+    02110-1301 USA.
+
+    Linking this library statically or dynamically with other modules is
+    making a combined work based on this library.  Thus, the terms and
+    conditions of the GNU General Public License cover the whole
+    combination.
+
+    As a special exception, the copyright holders of this library give you
+    permission to link this library with independent modules to produce an
+    executable, regardless of the license terms of these independent
+    modules, and to copy and distribute the resulting executable under
+    terms of your choice, provided that you also meet, for each linked
+    independent module, the terms and conditions of the license of that
+    module.  An independent module is a module which is not derived from
+    or based on this library.  If you modify this library, you may extend
+    this exception to your version of the library, but you are not
+    obligated to do so.  If you do not wish to do so, delete this
+    exception statement from your version.
+
+-->
+<html>
+<head>
+<style type="text/css">
+body {
+	background-color: #d0e4fe;
+}
+
+table,th,td {
+	border: 1px solid black;
+}
+</style>
+</head>
+<body>
+
+<h3>OSLEF (Open Small-Loan Exchange Format)</h3>
+
+<p>The purpose of this document is to define the OSLEF
+specification.</p>
+
+<h3>Introduction</h3>
+
+<p>OSLEF data is represented by a directory containing CSV files.
+The basic structure of these files must conform to the following CSV
+specification:</p>
+
+<a href="http://tools.ietf.org/html/rfc4180">http://tools.ietf.org/html/rfc4180</a>
+
+<p>The first record in each file is a header record which assigns a
+unique name to each column in the file. The following records must
+contain data corresponding to these columns.</p>
+
+<p>Additionally, to facilitate the flattening-out of one-to-many
+relationships within loan data, an OSLEF-compliant CSV file has two
+kinds of columns. The first kind may only be specified once. An example
+of this is the loan_id column in the loans.csv file. The second kind may
+be specified multiple times using a column name prefix followed by a
+name that makes the column unique. A column prefix follows the format
+PREFIX:NAME. For example, a loan might have more than phone number by
+which to contact an applicant. In this case it would be possible to have
+two phone number columns: 'phone:home' and 'phone:work'.</p>
+
+<h3>Files Overview</h3>
+<p>There are three distinct CSV files in the OSLEF format.</p>
+<ul>
+	<li>
+	<p>loans.csv - this is the primary CSV file, as it contains most of
+	the information related to a given loan. installments.csv - contains
+	installment plan information. Each record references a record in the
+	loans.csv file.</p>
+	</li>
+
+	<li>
+	<p>history.csv - contains loan history information, including
+	payments and other loan servicing activities which affect the balances
+	of a loan's accounts (principal, fees, etc). Each record references a
+	record in the loans.csv file.</p>
+	</li>
+
+	<li>
+	<p>installments.csv - contains information on loan installment
+	plans. Each record references a record in the loans.csv file.</p>
+	</li>
+</ul>
+
+<h3>loans.csv - Columns</h3>
+
+<table>
+<thead>
+	<tr>
+		<th>Name</th>
+		<th>Type</th>
+		<th>Required</th>
+		<th>Description</th>
+		<th>Format</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td>loan_id</td>
+		<td>simple</td>
+		<td>true</td>
+		<td>Uniquely identifies a loan record</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>customer_id</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>Uniquely identifies the customer associated with a loan</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>ssn</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>A customer's social security number.</td>
+		<td>9 numeric characters (999999999)</td>
+	</tr>
+	<tr>
+		<td>first_name</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>A customer's first name.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>middle_initial</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>A customer's middle initial.</td>
+		<td>One character in length, of any type.</td>
+	</tr>
+	<tr>
+		<td>last_name</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>A customer's last name.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>date_of_birth</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The customer's birth date.</td>
+		<td>A date in the format YYYY-MM-DD</td>
+	</tr>
+	<tr>
+		<td>drivers_license_number</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The customer's driver's license number.</td>
+		<td>A two character US State identifier followed by the drivers license number. (TN2342343)</td>
+	</tr>
+	<tr>
+		<td>email_address</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The customer's email address.</td>
+		<td>A standard email address (name@domain.tld)</td>
+	</tr>
+	<tr>
+		<td>race</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The customer's race.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>heightInches</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The customer's height in inches.</td>
+		<td>A numeric value. (72.5)</td>
+	</tr>
+	<tr>
+		<td>gender</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The customer's gender.</td>
+		<td>Must be a value of 'male', 'female', or 'other'.</td>
+	</tr>
+	<tr>
+		<td>phone:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>One of a customer's phone numbers.</td>
+		<td>A 10-digit phone number. (9999999999)</td>
+	</tr>
+	<tr>
+		<td>residence.line_one:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>Line one of a customer's residence address.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>residence.line_two:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>Line two of a customer's residence address.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>residence.city:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The city of a customer's residence address.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>residence.state:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The state of a customer's residence address.</td>
+		<td>A two-character state abbreviation. (TN)</td>
+	</tr>
+	<tr>
+		<td>residence.zip5:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The zip code of a customer's residence address.</td>
+		<td>A 5-digit zip code. (23432)</td>
+	</tr>
+	<tr>
+		<td>residence.zip4:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The plus-4 zip code of a customer's residence address.</td>
+		<td>A 4-digit zip code. (2343)</td>
+	</tr>
+	<tr>
+		<td>reference.name:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The name of a customer reference.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>reference.home_phone:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The home phone number of a customer reference.</td>
+		<td>A 10-digit phone number. (9999999999)</td>
+	</tr>
+	<tr>
+		<td>reference.work_phone:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The work phone number of a customer reference.</td>
+		<td>A 10-digit phone number. (9999999999)</td>
+	</tr>
+	<tr>
+		<td>income.employer_name:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The name of a customer's employer.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>income.pay_frequency:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The frequency with which a customer is paid.</td>
+		<td>An integer value.</td>
+	</tr>
+	<tr>
+		<td>income.amount:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The amount that a customer is paid when paid.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+	<tr>
+		<td>income.next_pay_date:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>A customer's next pay date.</td>
+		<td>A date in the format YYYY-MM-DD</td>
+	</tr>
+	<tr>
+		<td>income.shift_hours:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>A text description of the hours a customer works.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>income.months_of_service:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The number of months the customer has been employed by the same employer.</td>
+		<td>An integer value.</td>
+	</tr>
+	<tr>
+		<td>income.has_direct_deposit:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>Indicates whether or not a customer is paid via direct deposit.</td>
+		<td>Must be either 'true' or 'false'.</td>
+	</tr>
+	<tr>
+		<td>loan_type</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>A freeform string describing the nature of a loan.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>when_executed</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The time when the loan was executed.</td>
+		<td>An ISO8601 time in the format yyyy-MM-ddTHH:mm:ss.SSSZZ. (2011-13-07T16:29:54.788Z)</td>
+	</tr>
+	<tr>
+		<td>loan_amount</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The proceeds amount of the loan.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+	<tr>
+		<td>disclosed_apr</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The loan's disclosed APR.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+	<tr>
+		<td>interest_rate</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The loan's interest rate.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+	<tr>
+		<td>financed_fee:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>A financed fee.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+	<tr>
+		<td>held_check.bank_name:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The held check's bank name.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>held_check.routing_number:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The held check bank routing number.</td>
+		<td>A nine-digit numeric ABA number. (262084356)</td>
+	</tr>
+	<tr>
+		<td>held_check.account_number:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The held check bank account number.</td>
+		<td>An integer value.</td>
+	</tr>
+	<tr>
+		<td>held_check.number:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The held check number.</td>
+		<td>An integer value.</td>
+	</tr>
+	<tr>
+		<td>held_check.amount:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The held check amount</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+	<tr>
+		<td>held_check.date:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The held check date.</td>
+		<td>A date in the format YYYY-MM-DD</td>
+	</tr>
+	<tr>
+		<td>vtitle.year:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The vehicle year.</td>
+		<td>A year in the format YYYY. (1944)</td>
+	</tr>
+	<tr>
+		<td>vtitle.color:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The vehicle color.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>vtitle.make:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The vehicle make.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>vtitle.model:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The vehicle model.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>vtitle.license:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The vehicle title license number.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>vtitle.vin:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The VIN number.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>vtitle.cert:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The vehicle registration certificate number.</td>
+		<td>No specific format.</td>
+	</tr>
+</tbody>
+</table>
+
+
+<h3>installments.csv - Columns</h3>
+
+<table>
+<thead>
+	<tr>
+		<th>Name</th>
+		<th>Type</th>
+		<th>Required</th>
+		<th>Description</th>
+		<th>Format</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td>loan_id</td>
+		<td>simple</td>
+		<td>true</td>
+		<td>Identifies the loan to which an installment applies.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>due_date</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The date an installment is due.</td>
+		<td>A date in the format YYYY-MM-DD</td>
+	</tr>
+	<tr>
+		<td>due_amount</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The amount due to be paid for a given installment.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+	<tr>
+		<td>account:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The amount to be applied for a given installment to a loan sub-account.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+</tbody>
+</table>
+
+
+<h3>history.csv - Columns</h3>
+
+<table>
+<thead>
+	<tr>
+		<th>Name</th>
+		<th>Type</th>
+		<th>Required</th>
+		<th>Description</th>
+		<th>Format</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td>loan_id</td>
+		<td>simple</td>
+		<td>true</td>
+		<td>Identifies the loan to which an installment applies.</td>
+		<td>No specific format.</td>
+	</tr>
+	<tr>
+		<td>due_date</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The date an installment is due.</td>
+		<td>A date in the format YYYY-MM-DD</td>
+	</tr>
+	<tr>
+		<td>due_amount</td>
+		<td>simple</td>
+		<td>false</td>
+		<td>The amount due to be paid for a given installment.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+	<tr>
+		<td>account:</td>
+		<td>prefix</td>
+		<td>false</td>
+		<td>The amount to be applied for a given installment to a loan sub-account.</td>
+		<td>A numeric value. (234.23)</td>
+	</tr>
+</tbody>
+</table>
+
+
+</body>
+</html>
